@@ -1,0 +1,19 @@
+a {
+  cursor: pointer; }
+
+html, body {
+  width: 100%;
+  height: 100%; }
+
+body {
+  background: #A1BA7A;
+  font: 100 'Alegreya Sans', sans-serif; }
+
+div#wrapper h2 {
+  font-family: 'Alegreya Sans', sans-serif;
+  font-weight: 100; }
+
+div#map {
+  width: 800px;
+  height: 800px;
+  margin: 0 auto; }
