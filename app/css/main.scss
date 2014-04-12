@@ -1,3 +1,7 @@
+@import 'bourbon';
+@import "neat/neat";
+@import "bitters/bitters";
+
 $background: #A1BA7A;
 $font-stack: 'Alegreya Sans', sans-serif;
 
@@ -24,5 +28,9 @@ div#map {
   width:800px;
   height:800px;
   margin: 0 auto;
+}
+
+.linear-gradient {     
+  @include linear-gradient(#1e5799, #2989d8); 
 }
 

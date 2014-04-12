@@ -7,7 +7,6 @@ var fireScale = d3.scale.pow().exponent(.5).domain([0, 1000, 10000, 56000, 23000
 var colorScale = d3.scale.linear().domain([1400, 1800, 1860, 1940, 2015]);
 
 d3.json("js/mtbs-fires.json", function(collection) {
-  console.log(collection.features);
 
   var transform = d3.geo.transform({point: projectPoint});
   var path = d3.geo.path().projection(transform);

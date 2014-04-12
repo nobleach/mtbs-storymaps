@@ -9,6 +9,10 @@ module.exports = function(grunt) {
 
     sass: {
       compile: {
+        options: {
+          includePaths: require('node-bourbon').includePaths,
+          outputStyle: 'compressed'
+        },
         files: {
           'app/css/main.css': 'app/css/main.scss'
         }
