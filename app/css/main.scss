@@ -1,8 +1,7 @@
 @import 'bourbon';
-@import "neat/neat";
-@import "bitters/bitters";
 
-$background: #A1BA7A;
+$background: #EAEBBC;
+$type-base-color: #224727;
 $font-stack: 'Alegreya Sans', sans-serif;
 
 a {
@@ -17,20 +16,39 @@ body {
   background:$background;
   font: 100 $font-stack;
 }
+
+div#header {
+  height:20px;
+  width:80%;
+  margin:0 auto;
+  padding: 12px 0;
+  font-weight: 400;
+  font-family: $font-stack;
+  color: $type-base-color;
+}
+
 div#wrapper {
 
   h2 {
     font-family: $font-stack;
     font-weight: 100;
+    color: $type-base-color;
+    font-size: 36px;
   }
-}
-div#map {
-  width:800px;
-  height:800px;
-  margin: 0 auto;
+
+  div#map {
+    width:100%;
+    height:600px;
+    margin: 0 auto;
+  }
+
+  div#content {
+    width:80%;
+    margin: 0 auto;
+  }
 }
 
 .linear-gradient {     
-  @include linear-gradient(#1e5799, #2989d8); 
+  @include linear-gradient(#5993FF, #ffffff); 
 }
 

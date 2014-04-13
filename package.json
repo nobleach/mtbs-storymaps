@@ -31,6 +31,7 @@
     "connect-livereload": "^0.3.2",
     "grunt-express": "^1.2.1",
     "grunt-sass": "^0.12.1",
-    "node-bourbon": "^1.0.0"
+    "node-bourbon": "^1.0.0",
+    "node-neat": "^1.2.0"
   }
 }
