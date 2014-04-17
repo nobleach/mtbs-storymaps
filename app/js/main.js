@@ -64,9 +64,10 @@ d3.json("js/mtbs-fires.json", function(collection) {
     .append("rect")
     .attr({
       x:function(d, i) { return i * 10;},
-      y:function(d, i) { return 20;},
+      y:function(d, i) { return 150 - (d.numFires * .1);},
+      // y:0,
       width:9,
-      height: function(d) {return d.numFires / 10},
+      height: function(d) {return d.numFires * .1;},
       fill: "orange"
     });
 
