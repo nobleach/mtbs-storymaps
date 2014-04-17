@@ -1,4 +1,7 @@
 @import 'bourbon';
+@import 'grid-settings';
+@import 'neat';
+@import 'bitters/bitters';
 
 $background: #EAEBBC;
 $type-base-color: #224727;
@@ -51,4 +54,3 @@ div#wrapper {
 .linear-gradient {     
   @include linear-gradient(#5993FF, #ffffff); 
 }
-
