@@ -9,9 +9,21 @@ module.exports = function(grunt) {
 
     sass: {
       compile: {
+        options: {
+          includePaths: require('node-neat').includePaths,
+          outputStyle: 'compressed'
+        },
         files: {
           'app/css/main.css': 'app/css/main.scss'
         }
+      // },
+      // compileNeat: {
+      //   optione: {
+      //     includePaths: require('node-neat').includePaths,
+      //   },
+      //   files: {
+      //     'app/css/main.css': 'app/css/main.scss'
+      //   }
       }
     },
 
