@@ -43,6 +43,7 @@ div.footer {
     width:80%;
     height:300px;
     margin: 0 auto;
+    color:#fff;
 
     h2 {
       display:inline-block;
@@ -67,6 +68,18 @@ div.footer {
 
     svg {
       display:inline-block;
+      margin-left:50px;
+
+      .axis path, .axis line {
+        fill: none;
+        stroke: white;
+        shape-rendering: crispEdges;
+      }
+
+      .axis .tick {
+        fill:white;
+      }
+
     }
 
     div.vert-seperator {
