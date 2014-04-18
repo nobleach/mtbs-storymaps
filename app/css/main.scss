@@ -64,6 +64,17 @@ div.footer {
     hr {
       margin-top:5px;
     }
+
+    svg {
+      display:inline-block;
+    }
+
+    div.vert-seperator {
+      display: inline-block;
+      border-right: 1px solid #fff;
+      height:150px;
+      margin-right:24px;
+    }
   }
 
 }
