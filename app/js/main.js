@@ -98,7 +98,7 @@ d3.json("js/mtbs-fires.json", function(collection) {
     .append("rect")
     .attr({
       x:function(d, i) { return i * 10;},
-      y:function(d, i) { return 150 - (numHeightScale(d.numFires));},
+      y:function(d, i) { return h - (numHeightScale(d.numFires));},
       width:9,
       height: function(d) {return numHeightScale(d.numFires);},
       fill: "orange"
@@ -115,8 +115,8 @@ d3.json("js/mtbs-fires.json", function(collection) {
     .append("rect")
     .attr({
       x:function(d, i) { return i * 10;},
-      y:function(d, i) { return 150 - (areaHeightScale(d.area));},
-      // y:0,
+      //need to fix this as we don't want to move bars
+      y:function(d, i) { return h - (areaHeightScale(d.area));},
       width:9,
       height: function(d) {return areaHeightScale(d.area);},
       fill: "orange"
