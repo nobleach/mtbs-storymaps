@@ -61,13 +61,12 @@ d3.json("js/mtbs-fires.json", function(collection) {
     firesByYear.push(currYear);
   }
 
+  colorScale.range(["#FFFF66", "#FFFF00", "#E68000", "#D94000", "#CC0000"]);
+  fireScale.range([2.5, 3, 4, 5, 10]);
 
   var numHeightScale = d3.scale.linear()
     .domain([0, d3.max(firesByYear, function(d) { return d.numFires; })])
     .range([0, 150]);
-
-    colorScale.range(["#FFFF66", "#FFFF00", "#E68000", "#D94000", "#CC0000"]);
-    fireScale.range([2.5, 3, 4, 5, 10]);
 
   var areaHeightScale = d3.scale.linear()
     .domain([0, d3.max(firesByYear, function(d) { return d.area; })])
