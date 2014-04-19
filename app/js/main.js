@@ -1,6 +1,6 @@
-var margin = {top: 10, right: 10, bottom: 20, left: 80},
-  w = 380 - margin.left - margin.right,
-  h = 170 - margin.top - margin.bottom,
+var margin = {top: 10, right: 10, bottom: 30, left: 80},
+  w = 450 - margin.left - margin.right,
+  h = 210 - margin.top - margin.bottom,
   brush = d3.svg.brush(),
   brashDirty;
 
@@ -13,8 +13,8 @@ var fireScale = d3.scale.pow().exponent(.5).domain([0, 1000, 10000, 56000, 23000
 var colorScale = d3.scale.linear().domain([0,100,1000,10000, 100000]);
 
 var yearHist = d3.select('#content').append("svg").attr({
-  width:w,
-  height:h
+  width:w + margin.left + margin.right,
+  height:h + margin.top + margin.bottom
 });
 
 var sep = d3.select("#content").append("div").attr({
@@ -22,8 +22,8 @@ var sep = d3.select("#content").append("div").attr({
 });
 
 var areaHist = d3.select('#content').append("svg").attr({
-  width:w,
-  height:h
+  width:w + margin.left + margin.right,
+  height:h + margin.top + margin.bottom
 });
 
 
@@ -72,7 +72,7 @@ d3.json("js/mtbs-fires.json", function(collection) {
     .domain([0, d3.max(firesByYear, function(d) { return d.area; })])
     .range([h, 0]);
 
-  var areaYearScale = d3.time.scale()
+  var areaYearScale = d3.scale.linear()
     .domain(d3.extent(firesByYear, function(d) {return d.year})) 
     .range([0, w]);
 
@@ -116,7 +116,7 @@ d3.json("js/mtbs-fires.json", function(collection) {
 
   areaHist.append("g").attr({
     "class": "axis",
-    transform: "translate("+[0, h - margin.bottom]+")"
+    transform: "translate("+[margin.left,h]+")"
 
   }).call(xAreaAxis);
 
@@ -126,7 +126,6 @@ d3.json("js/mtbs-fires.json", function(collection) {
     .append("rect")
     .attr({
       x:function(d, i) { return w - (i * 10);},
-      //need to fix this as we don't want to move bars
       y:function(d, i) { return h - (areaHeightScale(d.area));},
       width:9,
       height: function(d) {return areaHeightScale(d.area);},
