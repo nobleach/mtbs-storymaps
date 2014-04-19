@@ -1,6 +1,6 @@
 var margin = {top: 10, right: 10, bottom: 20, left: 80},
-  w = 300,
-  h = 150,
+  w = 380 - margin.left - margin.right,
+  h = 170 - margin.top - margin.bottom,
   brush = d3.svg.brush(),
   brashDirty;
 
@@ -66,14 +66,20 @@ d3.json("js/mtbs-fires.json", function(collection) {
 
   var numHeightScale = d3.scale.linear()
     .domain([0, d3.max(firesByYear, function(d) { return d.numFires; })])
-    .range([0, 150]);
+    .range([h, 0]);
 
   var areaHeightScale = d3.scale.linear()
     .domain([0, d3.max(firesByYear, function(d) { return d.area; })])
-    .range([margin.top, h - margin.bottom]);
+    .range([h, 0]);
+
+  var areaYearScale = d3.time.scale()
+    .domain(d3.extent(firesByYear, function(d) {return d.year})) 
+    .range([0, w]);
 
   var yAreaAxis = d3.svg.axis().scale(areaHeightScale).orient("left");
   var yNumAxis = d3.svg.axis().scale(numHeightScale).orient("left");
+  var xAreaAxis = d3.svg.axis().scale(areaYearScale).orient("bottom").ticks(5);
+  var xNumAxis = d3.svg.axis().scale(areaYearScale).orient("bottom").ticks(5);
 
     colorScale.range(["#FFFF66", "#FFFF00", "#E68000", "#D94000", "#CC0000"]);
     fireScale.range([2.5, 3, 4, 5, 10]);
@@ -89,14 +95,14 @@ d3.json("js/mtbs-fires.json", function(collection) {
   yearHist.append("g").attr({
     "class": "axis",
     transform: "translate(" + [margin.left, 0] + ")"
-  }).call(yAreaAxis);
+  }).call(yNumAxis);
 
   yearHist.selectAll("rect")
     .data(firesByYear)
     .enter()
     .append("rect")
     .attr({
-      x:function(d, i) { return i * 10;},
+      x:function(d, i) { return w - (i * 10);},
       y:function(d, i) { return h - (numHeightScale(d.numFires));},
       width:9,
       height: function(d) {return numHeightScale(d.numFires);},
@@ -108,12 +114,18 @@ d3.json("js/mtbs-fires.json", function(collection) {
     transform: "translate(" + [margin.left, 0] + ")"
   }).call(yAreaAxis);
 
+  areaHist.append("g").attr({
+    "class": "axis",
+    transform: "translate("+[0, h - margin.bottom]+")"
+
+  }).call(xAreaAxis);
+
   areaHist.selectAll("rect")
     .data(firesByYear)
     .enter()
     .append("rect")
     .attr({
-      x:function(d, i) { return i * 10;},
+      x:function(d, i) { return w - (i * 10);},
       //need to fix this as we don't want to move bars
       y:function(d, i) { return h - (areaHeightScale(d.area));},
       width:9,
