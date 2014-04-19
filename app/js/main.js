@@ -17,10 +17,6 @@ var yearHist = d3.select('#content').append("svg").attr({
   height:h + margin.top + margin.bottom
 });
 
-var sep = d3.select("#content").append("div").attr({
-  class:'vert-seperator'
-});
-
 var areaHist = d3.select('#content').append("svg").attr({
   width:w + margin.left + margin.right,
   height:h + margin.top + margin.bottom
@@ -97,12 +93,18 @@ d3.json("js/mtbs-fires.json", function(collection) {
     transform: "translate(" + [margin.left, 0] + ")"
   }).call(yNumAxis);
 
+  yearHist.append("g").attr({
+    "class": "axis",
+    transform: "translate("+[margin.left,h]+")"
+
+  }).call(xAreaAxis);
+
   yearHist.selectAll("rect")
     .data(firesByYear)
     .enter()
     .append("rect")
     .attr({
-      x:function(d, i) { return w - (i * 10);},
+      x:function(d, i) { return w + margin.left - areaYearScale(d.year);},
       y:function(d, i) { return h - (numHeightScale(d.numFires));},
       width:9,
       height: function(d) {return numHeightScale(d.numFires);},
@@ -125,7 +127,7 @@ d3.json("js/mtbs-fires.json", function(collection) {
     .enter()
     .append("rect")
     .attr({
-      x:function(d, i) { return w - (i * 10);},
+      x:function(d, i) { return w + margin.left - areaYearScale(d.year);},
       y:function(d, i) { return h - (areaHeightScale(d.area));},
       width:9,
       height: function(d) {return areaHeightScale(d.area);},
