@@ -74,7 +74,7 @@ d3.json("js/mtbs-fires.json", function(collection) {
 
   var yAreaAxis = d3.svg.axis().scale(areaHeightScale).orient("left");
   var yNumAxis = d3.svg.axis().scale(numHeightScale).orient("left");
-  var xAreaAxis = d3.svg.axis().scale(areaYearScale).orient("bottom").ticks(5);
+  var xAreaAxis = d3.svg.axis().scale(areaYearScale).orient("bottom").ticks(5).tickFormat(d3.format(""));
   var xNumAxis = d3.svg.axis().scale(areaYearScale).orient("bottom").ticks(5);
 
     colorScale.range(["#FFFF66", "#FFFF00", "#E68000", "#D94000", "#CC0000"]);
