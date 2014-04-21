@@ -1,7 +1,8 @@
 var margin = {top: 10, right: 10, bottom: 30, left: 80},
   w = 450 - margin.left - margin.right,
   h = 210 - margin.top - margin.bottom,
-  brashDirty;
+  brashDirty,
+  feature;
 
 var map = L.map('map',{center: [30.4486736, -127.88085937], zoom: 3})
   .addLayer(new L.TileLayer("http://{s}.tiles.mapbox.com/v3/examples.map-vyofok3q/{z}/{x}/{y}.png"));
@@ -82,13 +83,19 @@ d3.json("js/mtbs-fires.json", function(collection) {
   colorScale.range(["#FFFF66", "#FFFF00", "#E68000", "#D94000", "#CC0000"]);
   
   /*************** main map features **************************/ 
-  var feature = g.selectAll("path")
-    //here's where we attach the data for the map.
-    .data(fires)
-    .enter().append("path")
-    .style("fill", function(d) {return colorScale(d.area)});
+  function update(selection) {
+
+    feature = g.selectAll("path")
+     .data(selection);
+
+    feature.enter().append("path")
+     .style("fill", function(d) {return colorScale(d.area)});
+
+    feature.exit().remove(); 
+  }
 
   map.on("viewreset", reset);
+  update(fires);
   reset();
 
   yearHist.append("g").attr({
@@ -156,14 +163,7 @@ d3.json("js/mtbs-fires.json", function(collection) {
       if(fire.year > startYear && fire.year < endYear) return fire;
     });
 
-    var plots = g.selectAll("path")
-      .data(selectedFires);
-
-    plots.enter().append("path")
-      .style("fill", "black");
-
-    plots.exit().remove();
-    // d3.select(this).call(brush.extent(extent1));
+    update(selectedFires);
   }
 
   // Reposition the SVG to cover the features.
