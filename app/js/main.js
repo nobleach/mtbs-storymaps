@@ -1,7 +1,6 @@
 var margin = {top: 10, right: 10, bottom: 30, left: 80},
   w = 450 - margin.left - margin.right,
   h = 210 - margin.top - margin.bottom,
-  brush = d3.svg.brush(),
   brashDirty;
 
 var map = L.map('map',{center: [30.4486736, -127.88085937], zoom: 3})
@@ -60,6 +59,7 @@ d3.json("js/mtbs-fires.json", function(collection) {
   colorScale.range(["#FFFF66", "#FFFF00", "#E68000", "#D94000", "#CC0000"]);
   fireScale.range([2.5, 3, 4, 5, 10]);
 
+  //scales
   var numHeightScale = d3.scale.linear()
     .domain([0, d3.max(firesByYear, function(d) { return d.numFires; })])
     .range([h, 0]);
@@ -75,6 +75,12 @@ d3.json("js/mtbs-fires.json", function(collection) {
   var yAreaAxis = d3.svg.axis().scale(areaHeightScale).orient("left");
   var yNumAxis = d3.svg.axis().scale(numHeightScale).orient("left");
   var xAreaAxis = d3.svg.axis().scale(areaYearScale).orient("bottom").ticks(5).tickFormat(d3.format(""));
+
+  //brush
+  var brush = d3.svg.brush()
+    .x(areaYearScale)
+    .extent([1984, 2013])
+    .on("brush", brushed);
 
     colorScale.range(["#FFFF66", "#FFFF00", "#E68000", "#D94000", "#CC0000"]);
     fireScale.range([2.5, 3, 4, 5, 10]);
@@ -132,6 +138,41 @@ d3.json("js/mtbs-fires.json", function(collection) {
       height: function(d) {return areaHeightScale(d.area);},
       fill: "orange"
     });
+
+  var gBrush = areaHist.append("g")
+      .attr({
+        "class": "brush",
+        transform: "translate(" + [margin.left, 0] + ")"
+      })
+      .call(brush);
+
+  gBrush.selectAll("rect")
+      .attr("height", h);
+
+  function brushed() {
+    // var extent0 = brush.extent(),
+    //     extent1;
+    //
+    // // if dragging, preserve the width of the extent
+    // if (d3.event.mode === "move") {
+    //   var d0 = d3.time.day.round(extent0[0]),
+    //       d1 = d3.time.day.offset(d0, Math.round((extent0[1] - extent0[0]) / 864e5));
+    //   extent1 = [d0, d1];
+    // }
+    //
+    // // otherwise, if resizing, round both dates
+    // else {
+    //   extent1 = extent0.map(d3.time.day.round);
+    //
+    //   // if empty when rounded, use floor & ceil instead
+    //   if (extent1[0] >= extent1[1]) {
+    //     extent1[0] = d3.time.day.floor(extent0[0]);
+    //     extent1[1] = d3.time.day.ceil(extent0[1]);
+    //   }
+    // }
+    //
+    // d3.select(this).call(brush.extent(extent1));
+  }
 
   // Reposition the SVG to cover the features.
   function reset() {

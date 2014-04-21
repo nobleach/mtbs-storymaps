@@ -79,6 +79,13 @@ div.footer {
         fill:white;
       }
 
+      .brush .extent {
+        stroke: #999;
+        fill: white;
+        fill-opacity: .125;
+        shape-rendering: crispEdges;
+      }
+
     }
 
     div.vert-seperator {
