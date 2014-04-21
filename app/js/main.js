@@ -56,9 +56,6 @@ d3.json("js/mtbs-fires.json", function(collection) {
     firesByYear.push(currYear);
   }
 
-  colorScale.range(["#FFFF66", "#FFFF00", "#E68000", "#D94000", "#CC0000"]);
-  fireScale.range([2.5, 3, 4, 5, 10]);
-
   //scales
   var numHeightScale = d3.scale.linear()
     .domain([0, d3.max(firesByYear, function(d) { return d.numFires; })])
@@ -80,12 +77,13 @@ d3.json("js/mtbs-fires.json", function(collection) {
   var brush = d3.svg.brush()
     .x(areaYearScale)
     .extent([1984, 2013])
-    .on("brush", brushed);
+    .on("brushend", brushed);
 
-    colorScale.range(["#FFFF66", "#FFFF00", "#E68000", "#D94000", "#CC0000"]);
-    fireScale.range([2.5, 3, 4, 5, 10]);
+  colorScale.range(["#FFFF66", "#FFFF00", "#E68000", "#D94000", "#CC0000"]);
+  
+  /*************** main map features **************************/ 
   var feature = g.selectAll("path")
-    //here's where we attach the data for now.
+    //here's where we attach the data for the map.
     .data(fires)
     .enter().append("path")
     .style("fill", function(d) {return colorScale(d.area)});
@@ -101,7 +99,6 @@ d3.json("js/mtbs-fires.json", function(collection) {
   yearHist.append("g").attr({
     "class": "axis",
     transform: "translate("+[margin.left,h]+")"
-
   }).call(xAreaAxis);
 
   yearHist.selectAll("rect")
@@ -150,27 +147,22 @@ d3.json("js/mtbs-fires.json", function(collection) {
       .attr("height", h);
 
   function brushed() {
-    // var extent0 = brush.extent(),
-    //     extent1;
-    //
-    // // if dragging, preserve the width of the extent
-    // if (d3.event.mode === "move") {
-    //   var d0 = d3.time.day.round(extent0[0]),
-    //       d1 = d3.time.day.offset(d0, Math.round((extent0[1] - extent0[0]) / 864e5));
-    //   extent1 = [d0, d1];
-    // }
-    //
-    // // otherwise, if resizing, round both dates
-    // else {
-    //   extent1 = extent0.map(d3.time.day.round);
-    //
-    //   // if empty when rounded, use floor & ceil instead
-    //   if (extent1[0] >= extent1[1]) {
-    //     extent1[0] = d3.time.day.floor(extent0[0]);
-    //     extent1[1] = d3.time.day.ceil(extent0[1]);
-    //   }
-    // }
-    //
+    if (!d3.event.sourceEvent) return; // only transition after input
+    var extent0 = brush.extent();
+    startYear = Math.floor(extent0[0]);
+    endYear = Math.floor(extent0[1]);
+
+    var selectedFires = fires.filter(function(fire) {
+      if(fire.year > startYear && fire.year < endYear) return fire;
+    });
+
+    var plots = g.selectAll("path")
+      .data(selectedFires);
+
+    plots.enter().append("path")
+      .style("fill", "black");
+
+    plots.exit().remove();
     // d3.select(this).call(brush.extent(extent1));
   }
 
