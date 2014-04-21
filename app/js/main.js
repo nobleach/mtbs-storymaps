@@ -1,3 +1,9 @@
+var margin = {top: 10, right: 10, bottom: 30, left: 80},
+  w = 450 - margin.left - margin.right,
+  h = 210 - margin.top - margin.bottom,
+  brush = d3.svg.brush(),
+  brashDirty;
+
 var map = L.map('map',{center: [30.4486736, -127.88085937], zoom: 3})
   .addLayer(new L.TileLayer("http://{s}.tiles.mapbox.com/v3/examples.map-vyofok3q/{z}/{x}/{y}.png"));
 
@@ -7,18 +13,15 @@ var fireScale = d3.scale.pow().exponent(.5).domain([0, 1000, 10000, 56000, 23000
 var colorScale = d3.scale.linear().domain([0,100,1000,10000, 100000]);
 
 var yearHist = d3.select('#content').append("svg").attr({
-  width:300,
-  height:150
-});
-
-var sep = d3.select("#content").append("div").attr({
-  class:'vert-seperator'
+  width:w + margin.left + margin.right,
+  height:h + margin.top + margin.bottom
 });
 
 var areaHist = d3.select('#content').append("svg").attr({
-  width:300,
-  height:150
+  width:w + margin.left + margin.right,
+  height:h + margin.top + margin.bottom
 });
+
 
 d3.json("js/mtbs-fires.json", function(collection) {
 
@@ -54,10 +57,27 @@ d3.json("js/mtbs-fires.json", function(collection) {
     firesByYear.push(currYear);
   }
 
-
   colorScale.range(["#FFFF66", "#FFFF00", "#E68000", "#D94000", "#CC0000"]);
   fireScale.range([2.5, 3, 4, 5, 10]);
 
+  var numHeightScale = d3.scale.linear()
+    .domain([0, d3.max(firesByYear, function(d) { return d.numFires; })])
+    .range([h, 0]);
+
+  var areaHeightScale = d3.scale.linear()
+    .domain([0, d3.max(firesByYear, function(d) { return d.area; })])
+    .range([h, 0]);
+
+  var areaYearScale = d3.scale.linear()
+    .domain(d3.extent(firesByYear, function(d) {return d.year})) 
+    .range([0, w]);
+
+  var yAreaAxis = d3.svg.axis().scale(areaHeightScale).orient("left");
+  var yNumAxis = d3.svg.axis().scale(numHeightScale).orient("left");
+  var xAreaAxis = d3.svg.axis().scale(areaYearScale).orient("bottom").ticks(5).tickFormat(d3.format(""));
+
+    colorScale.range(["#FFFF66", "#FFFF00", "#E68000", "#D94000", "#CC0000"]);
+    fireScale.range([2.5, 3, 4, 5, 10]);
   var feature = g.selectAll("path")
     //here's where we attach the data for now.
     .data(fires)
@@ -67,29 +87,49 @@ d3.json("js/mtbs-fires.json", function(collection) {
   map.on("viewreset", reset);
   reset();
 
+  yearHist.append("g").attr({
+    "class": "axis",
+    transform: "translate(" + [margin.left, 0] + ")"
+  }).call(yNumAxis);
+
+  yearHist.append("g").attr({
+    "class": "axis",
+    transform: "translate("+[margin.left,h]+")"
+
+  }).call(xAreaAxis);
+
   yearHist.selectAll("rect")
     .data(firesByYear)
     .enter()
     .append("rect")
     .attr({
-      x:function(d, i) { return i * 10;},
-      y:function(d, i) { return 150 - (d.numFires * .1);},
-      // y:0,
+      x:function(d, i) { return w + margin.left - areaYearScale(d.year);},
+      y:function(d, i) { return h - (numHeightScale(d.numFires));},
       width:9,
-      height: function(d) {return d.numFires * .1;},
+      height: function(d) {return numHeightScale(d.numFires);},
       fill: "orange"
     });
+
+  areaHist.append("g").attr({
+    "class": "axis",
+    transform: "translate(" + [margin.left, 0] + ")"
+  }).call(yAreaAxis);
+
+  areaHist.append("g").attr({
+    "class": "axis",
+    transform: "translate("+[margin.left,h]+")"
+
+  }).call(xAreaAxis);
 
   areaHist.selectAll("rect")
     .data(firesByYear)
     .enter()
     .append("rect")
     .attr({
-      x:function(d, i) { return i * 10;},
-      y:function(d, i) { return 150 - (d.area * .00001);},
-      // y:0,
+      x:function(d, i) { return w + margin.left - areaYearScale(d.year);},
+      y:function(d, i) { return h - (areaHeightScale(d.area));},
       width:9,
-      height: function(d) {return d.area * .00001;},
+      height: function(d) {return areaHeightScale(d.area);},
       fill: "orange"
     });
 

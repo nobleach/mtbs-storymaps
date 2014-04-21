@@ -1,7 +1,7 @@
 function barChart() {
   if (!barChart.id) barChart.id = 0;
 
-  var margin = {top: 10, right: 10, bottom: 20, left: 10},
+  var margin = {top: 10, right: 10, bottom: 20, left: 40},
       x,
       y = d3.scale.linear().range([100, 0]),
       id = barChart.id++,
