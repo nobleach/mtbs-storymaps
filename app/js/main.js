@@ -88,7 +88,10 @@ d3.json("js/mtbs-fires.json", function(collection) {
     feature = g.selectAll("path")
      .data(selection);
 
+    feature.attr("class", "update");
+
     feature.enter().append("path")
+     .attr("class", "enter")
      .style("fill", function(d) {return colorScale(d.area)});
 
     feature.exit().remove(); 
@@ -154,14 +157,15 @@ d3.json("js/mtbs-fires.json", function(collection) {
       .attr("height", h);
 
   function brushed() {
-    if (!d3.event.sourceEvent) return; // only transition after input
     var extent0 = brush.extent();
     startYear = Math.floor(extent0[0]);
     endYear = Math.floor(extent0[1]);
 
     var selectedFires = fires.filter(function(fire) {
-      if(fire.year > startYear && fire.year < endYear) return fire;
+      if(fire.year >= startYear && fire.year <= endYear) return fire;
     });
+
+    console.log(selectedFires.length);
 
     update(selectedFires);
   }
