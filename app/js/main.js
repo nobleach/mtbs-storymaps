@@ -191,7 +191,6 @@ d3.json("js/mtbs-fires.json", function(collection) {
       if(fire.year >= startYear && fire.year <= endYear) return fire;
     });
 
-    update(selectedFires);
     var otherBrush;
 
     if(this.id === 'fireBrush') {
@@ -201,8 +200,10 @@ d3.json("js/mtbs-fires.json", function(collection) {
     }
 
     otherBrush
-      .call(brush.extent([startYear,endYear]))
-      .call(brush.event);
+    .call(brush.extent([startYear,endYear]))
+    .call(brush.event);
+
+    update(selectedFires);
   }
 
   // Reposition the SVG to cover the features.
