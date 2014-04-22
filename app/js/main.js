@@ -140,6 +140,7 @@ d3.json("js/mtbs-fires.json", function(collection) {
   var gyBrush = yearHist.append("g")
       .attr({
         "class": "brush",
+        "id": "fireBrush",
         transform: "translate(" + [margin.left, 0] + ")"
       })
       .call(brush);
@@ -191,6 +192,17 @@ d3.json("js/mtbs-fires.json", function(collection) {
     });
 
     update(selectedFires);
+    var otherBrush;
+
+    if(this.id === 'fireBrush') {
+      otherBrush = d3.select('#areaBrush').transition();
+    } else {
+      otherBrush = d3.select('#fireBrush').transition();
+    }
+
+    otherBrush
+      .call(brush.extent([startYear,endYear]))
+      .call(brush.event);
   }
 
   // Reposition the SVG to cover the features.
