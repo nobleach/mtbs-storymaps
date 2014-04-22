@@ -173,6 +173,7 @@ d3.json("js/mtbs-fires.json", function(collection) {
   var gBrush = areaHist.append("g")
       .attr({
         "class": "brush",
+        "id": "areaBrush",
         transform: "translate(" + [margin.left, 0] + ")"
       })
       .call(brush);
@@ -188,8 +189,6 @@ d3.json("js/mtbs-fires.json", function(collection) {
     var selectedFires = fires.filter(function(fire) {
       if(fire.year >= startYear && fire.year <= endYear) return fire;
     });
-
-    console.log(selectedFires.length);
 
     update(selectedFires);
   }
