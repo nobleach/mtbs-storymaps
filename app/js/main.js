@@ -1,6 +1,6 @@
 var margin = {top: 10, right: 20, bottom: 30, left: 80},
-  w = 450 - margin.left - margin.right,
-  h = 210 - margin.top - margin.bottom,
+  w = 380 - margin.left - margin.right,
+  h = 150 - margin.top - margin.bottom,
   brashDirty,
   feature;
 
