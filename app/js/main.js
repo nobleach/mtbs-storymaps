@@ -1,4 +1,4 @@
-var margin = {top: 10, right: 10, bottom: 30, left: 80},
+var margin = {top: 10, right: 20, bottom: 30, left: 80},
   w = 450 - margin.left - margin.right,
   h = 210 - margin.top - margin.bottom,
   brashDirty,
@@ -85,16 +85,29 @@ d3.json("js/mtbs-fires.json", function(collection) {
   /*************** main map features **************************/ 
   function update(selection) {
 
-    feature = g.selectAll("path")
-     .data(selection);
+    // binding the data
+    feature = g.selectAll(".path")
+      .data(selection);
 
-    feature.attr("class", "update");
+    // exit selection
+    feature
+     .exit()
+     .remove();
 
-    feature.enter().append("path")
-     .attr("class", "enter")
-     .style("fill", function(d) {return colorScale(d.area)});
+    // enter selection
+    feature
+      .enter()
+      .append("path")
+        .attr("class","path");
 
-    feature.exit().remove(); 
+    // update selection
+    feature
+      .style("fill", function(d) {return colorScale(d.area)});
+
+    // update selection
+    feature
+      .style("fill", function(d) {return colorScale(d.area)})
+      .attr("d",path); // this was the missing piece!
   }
 
   map.on("viewreset", reset);
@@ -122,6 +135,17 @@ d3.json("js/mtbs-fires.json", function(collection) {
       height: function(d) {return numHeightScale(d.numFires);},
       fill: "orange"
     });
+
+
+  var gyBrush = yearHist.append("g")
+      .attr({
+        "class": "brush",
+        transform: "translate(" + [margin.left, 0] + ")"
+      })
+      .call(brush);
+
+  gyBrush.selectAll("rect")
+      .attr("height", h);
 
   areaHist.append("g").attr({
     "class": "axis",
