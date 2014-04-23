@@ -1,8 +1,8 @@
-var margin = {top: 10, right: 10, bottom: 30, left: 80},
-  w = 450 - margin.left - margin.right,
-  h = 210 - margin.top - margin.bottom,
-  brush = d3.svg.brush(),
-  brashDirty;
+var margin = {top: 10, right: 20, bottom: 30, left: 80},
+  w = 380 - margin.left - margin.right,
+  h = 150 - margin.top - margin.bottom,
+  brashDirty,
+  feature;
 
 var map = L.map('map',{center: [30.4486736, -127.88085937], zoom: 3})
   .addLayer(new L.TileLayer("http://{s}.tiles.mapbox.com/v3/examples.map-vyofok3q/{z}/{x}/{y}.png"));
@@ -57,9 +57,7 @@ d3.json("js/mtbs-fires.json", function(collection) {
     firesByYear.push(currYear);
   }
 
-  colorScale.range(["#FFFF66", "#FFFF00", "#E68000", "#D94000", "#CC0000"]);
-  fireScale.range([2.5, 3, 4, 5, 10]);
-
+  //scales
   var numHeightScale = d3.scale.linear()
     .domain([0, d3.max(firesByYear, function(d) { return d.numFires; })])
     .range([h, 0]);
@@ -76,15 +74,44 @@ d3.json("js/mtbs-fires.json", function(collection) {
   var yNumAxis = d3.svg.axis().scale(numHeightScale).orient("left");
   var xAreaAxis = d3.svg.axis().scale(areaYearScale).orient("bottom").ticks(5).tickFormat(d3.format(""));
 
-    colorScale.range(["#FFFF66", "#FFFF00", "#E68000", "#D94000", "#CC0000"]);
-    fireScale.range([2.5, 3, 4, 5, 10]);
-  var feature = g.selectAll("path")
-    //here's where we attach the data for now.
-    .data(fires)
-    .enter().append("path")
-    .style("fill", function(d) {return colorScale(d.area)});
+  //brush
+  var brush = d3.svg.brush()
+    .x(areaYearScale)
+    .extent([1984, 2013])
+    .on("brushend", brushed);
+
+  colorScale.range(["#FFFF66", "#FFFF00", "#E68000", "#D94000", "#CC0000"]);
+  
+  /*************** main map features **************************/ 
+  function update(selection) {
+
+    // binding the data
+    feature = g.selectAll(".path")
+      .data(selection);
+
+    // exit selection
+    feature
+     .exit()
+     .remove();
+
+    // enter selection
+    feature
+      .enter()
+      .append("path")
+        .attr("class","path");
+
+    // update selection
+    feature
+      .style("fill", function(d) {return colorScale(d.area)});
+
+    // update selection
+    feature
+      .style("fill", function(d) {return colorScale(d.area)})
+      .attr("d",path); // this was the missing piece!
+  }
 
   map.on("viewreset", reset);
+  update(fires);
   reset();
 
   yearHist.append("g").attr({
@@ -95,7 +122,6 @@ d3.json("js/mtbs-fires.json", function(collection) {
   yearHist.append("g").attr({
     "class": "axis",
     transform: "translate("+[margin.left,h]+")"
-
   }).call(xAreaAxis);
 
   yearHist.selectAll("rect")
@@ -109,6 +135,18 @@ d3.json("js/mtbs-fires.json", function(collection) {
       height: function(d) {return numHeightScale(d.numFires);},
       fill: "orange"
     });
+
+
+  var gyBrush = yearHist.append("g")
+      .attr({
+        "class": "brush",
+        "id": "fireBrush",
+        transform: "translate(" + [margin.left, 0] + ")"
+      })
+      .call(brush);
+
+  gyBrush.selectAll("rect")
+      .attr("height", h);
 
   areaHist.append("g").attr({
     "class": "axis",
@@ -132,6 +170,40 @@ d3.json("js/mtbs-fires.json", function(collection) {
       height: function(d) {return areaHeightScale(d.area);},
       fill: "orange"
     });
+
+  var gBrush = areaHist.append("g")
+      .attr({
+        "class": "brush",
+        "id": "areaBrush",
+        transform: "translate(" + [margin.left, 0] + ")"
+      })
+      .call(brush);
+
+  gBrush.selectAll("rect")
+      .attr("height", h);
+
+  function brushed() {
+    var extent0 = brush.extent();
+    startYear = Math.floor(extent0[0]);
+    endYear = Math.floor(extent0[1]);
+
+    var selectedFires = fires.filter(function(fire) {
+      if(fire.year >= startYear && fire.year <= endYear) return fire;
+    });
+
+    update(selectedFires);
+    var otherBrush;
+
+    if(this.id === 'fireBrush') {
+      otherBrush = d3.select('#areaBrush').transition();
+    } else {
+      otherBrush = d3.select('#fireBrush').transition();
+    }
+
+    otherBrush
+      .call(brush.extent([startYear,endYear]))
+      .call(brush.event);
+  }
 
   // Reposition the SVG to cover the features.
   function reset() {
