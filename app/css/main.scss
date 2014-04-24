@@ -53,6 +53,18 @@ div.footer {
       font-size: 36px;
     }
 
+    .histogramContainer {
+      display: inline-block;
+
+      h4 {
+        width: 100%;
+        text-align: center;
+        font-family: $font-stack;
+        font-weight: 100;
+        font-size:20px;
+      }
+    }
+
     h3 {
       display:inline-block;
       font-family: $font-stack;
