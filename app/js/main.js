@@ -12,12 +12,12 @@ var g = svg.append("g").attr("class", "leaflet-zoom-hide");
 var fireScale = d3.scale.pow().exponent(.5).domain([0, 1000, 10000, 56000, 23000000]);
 var colorScale = d3.scale.linear().domain([0,100,1000,10000, 100000]);
 
-var yearHist = d3.select('#content').append("svg").attr({
+var yearHist = d3.select('#yearChart').append("svg").attr({
   width:w + margin.left + margin.right,
   height:h + margin.top + margin.bottom
 });
 
-var areaHist = d3.select('#content').append("svg").attr({
+var areaHist = d3.select('#areaChart').append("svg").attr({
   width:w + margin.left + margin.right,
   height:h + margin.top + margin.bottom
 });
@@ -195,12 +195,13 @@ d3.json("js/mtbs-fires.json", function(collection) {
     var otherBrush;
 
     if(this.id === 'fireBrush') {
-      otherBrush = d3.select('#areaBrush').transition();
+      otherBrush = d3.select('#areaBrush');
     } else {
-      otherBrush = d3.select('#fireBrush').transition();
+      otherBrush = d3.select('#fireBrush');
     }
 
     otherBrush
+      .transition()
       .call(brush.extent([startYear,endYear]))
       .call(brush.event);
   }
