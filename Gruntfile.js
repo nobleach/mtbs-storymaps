@@ -90,7 +90,6 @@ module.exports = function(grunt) {
             cwd: 'app',      // Src matches are relative to this path.
             src: ['js/**/*.js'], // Actual pattern(s) to match.
             dest: 'dist/'   // Destination path prefix.
-            /*ext: '.min.js',   // We don't do that on Dojo modules*/
           }
         ]
       }
@@ -110,7 +109,7 @@ module.exports = function(grunt) {
     cssmin: {
       combine: {
         files: {
-          'dist/css/app.css': ['app/css/**/*.css']
+          'dist/css/main.css': ['app/css/**/*.css']
         }
       },
       minify: {
@@ -135,34 +134,17 @@ module.exports = function(grunt) {
       }
     },
     copy: {
-      fonts: {
-        files: [
-          // throw font files into CSS path
-          {expand: true, cwd: 'app/css/', src: ['fonts/*'], dest: 'dist/css/', flatten: true, filter: 'isFile'}
-        ]
-      },
-      serviceDefs: {
-        files: [
-          // throw services.json into config ppath
-          {src: ['app/js/config/services.json'], dest: 'dist/js/config/services.json', filter: 'isFile'}
-        ]
-      },
-//      index: {
-//        files: [
-//          // copy index.html
-//          {src: ['app/index.html'], dest: 'dist/index.html', filter: 'isFile'}
-//        ]
-//      },
+     index: {
+       files: [
+         // copy index.html
+         {src: ['app/index.html'], dest: 'dist/index.html', filter: 'isFile'},
+         {src: ['app/js/mtbs-fires.json'], dest: 'dist/js/mtbs-fires.json', filter: 'isFile'}
+       ]
+     },
       images: {
         files: [
           // copy img folder
           {expand: true, cwd: 'app/img/', src: ['*'], dest: 'dist/img/', flatten: true, filter: 'isFile'}
-        ]
-      },
-      widget_templates: {
-        files: [
-          // includes files within path and its sub-directories
-          {expand: true, cwd: 'app/js/widgets/templates', src: ['*'], dest: 'dist/js/widgets/templates/', flatten: true, filter: 'isFile'}
         ]
       }
     }
@@ -181,7 +163,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-open');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.registerTask('default', ['jshint']);
-  grunt.registerTask('build', ['clean', 'sass', 'uglify', 'cssmin', 'htmlbuild', 'copy']);
+  grunt.registerTask('build', ['clean', 'sass', 'cssmin', 'uglify', 'copy']);
   grunt.registerTask('server', [
     'express',
     'open',
