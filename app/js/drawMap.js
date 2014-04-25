@@ -15,7 +15,7 @@ function projectPoint(x, y) {
 
 var fireScale = d3.scale.pow().exponent(.5).domain([0, 1000, 10000, 56000, 23000000]);
 
-var colorScale = d3.scale.linear().domain([1400, 1800, 1860, 1940, 2015]);
+var colorScale = d3.scale.linear().domain([1984, 2012]);
 
 var tooltip = d3.select("body").append("div")
 .attr("class", "tooltip")
@@ -48,13 +48,13 @@ d3.json("js/mtbs-fires.json", function(collection) {
   });
 
 
-  fires.sort(function(a, b){return a.id - b.id;})
+  // fires.sort(function(a, b){return a.id - b.id;})
 
   fireScale
   .range([2.5, 3, 4, 5, 10]);
 
   colorScale
-  .range(["#FFFF66", "#FFFF00", "#E68000", "#D94000", "#CC0000"]);
+  .range(["#FFFF66", "#CC0000"]);
 
   var feature = g.selectAll("circle")
   .data(fires)
@@ -68,12 +68,12 @@ d3.json("js/mtbs-fires.json", function(collection) {
 
   function update() {
     feature.attr("transform", 
-                 function(d) { 
-                   return "translate("+ 
-                     map.latLngToLayerPoint(d.LatLng).x +","+ 
-                     map.latLngToLayerPoint(d.LatLng).y +")";
-                 }
-                )
+      function(d) { 
+        return "translate("+ 
+          map.latLngToLayerPoint(d.LatLng).x +","+ 
+          map.latLngToLayerPoint(d.LatLng).y +")";
+      }
+    );
   }
   lb = 1.370;
 
