@@ -75,63 +75,63 @@ d3.json("js/mtbs-fires.json", function(collection) {
       }
     );
   }
-  lb = 1.370;
 
-  firesCF = crossfilter(fires),
-  all = firesCF.groupAll(),
-  year = firesCF.dimension(function(d){return d.year;}),
-  years = year.group(function(d){return Math.floor(d/10)*10;}),
-  area = firesCF.dimension(function(d){return d.area}),
-  areas = area.group(function(d){ 
-    var rv = Math.pow(lb, Math.floor(Math.log(d)/Math.log(lb))) 
-    return rv;
-  });
+  var lb = 1.370;
 
-    var charts = [
-      barChart()
-      .dimension(year)
-      .group(years)
-      .x(d3.scale.linear()
-         .domain([1984,2012])
-         .rangeRound([-1, 20*24-5])),
-
-         barChart()
-         .dimension(area)
-         .group(areas)
-         .x(d3.scale.log().base([lb])
-            .domain([1,16000000])
-            .rangeRound([0,20*24]))
-    ];
-
-    var chart = d3.selectAll(".chart")
-    .data(charts)
-    .each(function(chart){chart.on("brush", renderAll).on("brushend", renderAll)});
-
-    d3.selectAll("#total")
-    .text(firesCF.size());
-
-
-    function render(method){
-      d3.select(this).call(method);
-    }
-
-
-    lastFilterArray = [];
-    fires.forEach(function(d, i){
-      lastFilterArray[i] = 1;
+  var firesCF = crossfilter(fires),
+    all = firesCF.groupAll(),
+    year = firesCF.dimension(function(d){return d.year;}),
+    years = year.group(function(d){return Math.floor(d/10)*10;}),
+    area = firesCF.dimension(function(d){return d.area}),
+    areas = area.group(function(d){ 
+      var rv = Math.pow(lb, Math.floor(Math.log(d)/Math.log(lb))) 
+      return rv;
     });
 
-    function renderAll(){
-      chart.each(render);
+  var charts = [
+    barChart()
+    .dimension(year)
+    .group(years)
+    .x(d3.scale.linear()
+      .domain([1984,2012])
+      .rangeRound([-1, 20*24-5])),
 
-    }
+    barChart()
+    .dimension(area)
+    .group(areas)
+    .x(d3.scale.log().base([lb])
+      .domain([1,16000000])
+      .rangeRound([0,20*24]))
+  ];
 
-    window.reset = function(i){
-      charts[i].filter(null);
-      renderAll();
-    }
+  var chart = d3.selectAll(".chart")
+  .data(charts)
+  .each(function(chart){chart.on("brush", renderAll).on("brushend", renderAll)});
 
+  d3.selectAll("#total")
+  .text(firesCF.size());
+
+
+  function render(method){
+    d3.select(this).call(method);
+  }
+
+  var lastFilterArray = [];
+  fires.forEach(function(d, i){
+    lastFilterArray[i] = 1;
+  });
+
+  function renderAll(){
+    chart.each(render);
+
+  }
+
+  window.reset = function(i){
+    charts[i].filter(null);
     renderAll();
+  }
+
+  renderAll();
 });
 
 
