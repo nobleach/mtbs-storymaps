@@ -45,7 +45,7 @@ d3.json("js/mtbs-fires.json", function(collection) {
     d.name = d.properties.FIRENAME;
     d.year = +d.properties.FIRE_YEAR;
     d.area = +d.properties.R_ACRES;
-    d.LatLng = new L.LatLng(d.geometry.coordinates[0], d.geometry.coordinates[1]);
+    d.LatLng = new L.LatLng(d.geometry.coordinates[1], d.geometry.coordinates[0]);
     fires.push(d);
   });
 
