@@ -88,7 +88,7 @@ module.exports = function(grunt) {
           {
             expand: true,     // Enable dynamic expansion.
             cwd: 'app',      // Src matches are relative to this path.
-            src: ['js/**/*.js'], // Actual pattern(s) to match.
+            src: ['js/*.js'], // Actual pattern(s) to match.
             dest: 'dist/'   // Destination path prefix.
           }
         ]
@@ -145,6 +145,12 @@ module.exports = function(grunt) {
         files: [
           // copy img folder
           {expand: true, cwd: 'app/img/', src: ['*'], dest: 'dist/img/', flatten: true, filter: 'isFile'}
+        ]
+      },
+      vendorLibs: {
+        files: [
+          // copy img folder
+          {expand: true, cwd: 'app/js/vendor/', src: ['*'], dest: 'dist/js/vendor/', flatten: true, filter: 'isFile'}
         ]
       }
     }
