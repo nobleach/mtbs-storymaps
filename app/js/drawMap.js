@@ -13,8 +13,6 @@ function projectPoint(x, y) {
   this.stream.point(point.x, point.y);
 }
 
-var burns = svg.append("g");
-
 var fireScale = d3.scale.pow().exponent(.5).domain([0, 1000, 10000, 56000, 23000000]);
 
 var colorScale = d3.scale.linear().domain([1400, 1800, 1860, 1940, 2015]);
@@ -49,7 +47,6 @@ d3.json("js/mtbs-fires.json", function(collection) {
     fires.push(d);
   });
 
-  console.log(fires);
 
   fires.sort(function(a, b){return a.id - b.id;})
 
@@ -62,10 +59,9 @@ d3.json("js/mtbs-fires.json", function(collection) {
   var feature = g.selectAll("circle")
   .data(fires)
   .enter().append("circle")
-  .style("stroke", "black")  
-  .style("opacity", .6) 
-  .style("fill", "red")
-  .attr("r", 20);  
+  .attr("r", function(d) { return fireScale(d.area)})
+  .attr("id", function(d){return "id" + d.id;})
+  .style("fill", function(d){return colorScale(d.year);	});
 
   map.on("viewreset", update);
   update();
@@ -89,12 +85,7 @@ d3.json("js/mtbs-fires.json", function(collection) {
   areas = area.group(function(d){ 
     var rv = Math.pow(lb, Math.floor(Math.log(d)/Math.log(lb))) 
     return rv;
-  }),
-    type = firesCF.dimension(function(d){return d.type_of_meteorite;}),
-    types = type.group();
-
-    cartoDbId = firesCF.dimension(function(d){return d.id;});
-    cartoDbIds = cartoDbId.group()
+  });
 
     var charts = [
       barChart()
@@ -133,19 +124,6 @@ d3.json("js/mtbs-fires.json", function(collection) {
     function renderAll(){
       chart.each(render);
 
-      var filterArray = cartoDbIds.all();
-      filterArray.forEach(function(d, i){
-        if (d.value != lastFilterArray[i]){
-          lastFilterArray[i] = d.value;
-          d3.select("#id" + d.key).transition().duration(500)
-          .attr("r", d.value == 1 ? 2*fireScale(fires[i].area) : 0)
-          .transition().delay(550).duration(500)
-          .attr("r", d.value == 1 ? fireScale(fires[i].area) : 0);
-
-        }
-      })
-
-      d3.select("#active").text(all.value());
     }
 
     window.reset = function(i){

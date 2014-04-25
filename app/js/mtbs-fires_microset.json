@@ -1,0 +1,20 @@
+{
+"type": "FeatureCollection",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:EPSG::4269" } },
+
+"features": [
+{ "type": "Feature", "properties": { "FIRENAME": "GLACIER CREEK", "FIRE_YEAR": 1984.0, "R_ACRES": 1897.9 }, "geometry": { "type": "Point", "coordinates": [ -144.673248, 64.482307 ] } },
+{ "type": "Feature", "properties": { "FIRENAME": "CAMELBACK", "FIRE_YEAR": 1985.0, "R_ACRES": 4777.0 }, "geometry": { "type": "Point", "coordinates": [ -157.4207, 62.603004 ] } },
+{ "type": "Feature", "properties": { "FIRENAME": "SANDOZ", "FIRE_YEAR": 1984.0, "R_ACRES": 2693.0 }, "geometry": { "type": "Point", "coordinates": [ -102.849876, 43.083927 ] } },
+{ "type": "Feature", "properties": { "FIRENAME": "SUGARLOAF", "FIRE_YEAR": 1985.0, "R_ACRES": 5489.4 }, "geometry": { "type": "Point", "coordinates": [ -156.644989, 62.561867 ] } },
+{ "type": "Feature", "properties": { "FIRENAME": "TAL NW 44", "FIRE_YEAR": 1985.0, "R_ACRES": 1488.7 }, "geometry": { "type": "Point", "coordinates": [ -153.828674, 65.475586 ] } },
+{ "type": "Feature", "properties": { "FIRENAME": "NAPI PEAK", "FIRE_YEAR": 1984.0, "R_ACRES": 3681.5 }, "geometry": { "type": "Point", "coordinates": [ -113.457718, 48.804344 ] } },
+{ "type": "Feature", "properties": { "FIRENAME": "GAL NE 48", "FIRE_YEAR": 1985.0, "R_ACRES": 1299.2 }, "geometry": { "type": "Point", "coordinates": [ -155.26503, 65.210129 ] } },
+{ "type": "Feature", "properties": { "FIRENAME": "KIRBY", "FIRE_YEAR": 1984.0, "R_ACRES": 1599.5 }, "geometry": { "type": "Point", "coordinates": [ -106.95829, 45.336399 ] } },
+{ "type": "Feature", "properties": { "FIRENAME": "UNNAMED", "FIRE_YEAR": 1985.0, "R_ACRES": 1324.4 }, "geometry": { "type": "Point", "coordinates": [ -110.661919, 31.783247 ] } },
+{ "type": "Feature", "properties": { "FIRENAME": "LAKE CREEK", "FIRE_YEAR": 1984.0, "R_ACRES": 3620.6 }, "geometry": { "type": "Point", "coordinates": [ -106.322838, 45.616844 ] } },
+{ "type": "Feature", "properties": { "FIRENAME": "THREEMILE", "FIRE_YEAR": 1985.0, "R_ACRES": 2442.1 }, "geometry": { "type": "Point", "coordinates": [ -102.253761, 43.40527 ] } },
+{ "type": "Feature", "properties": { "FIRENAME": "FRAISER", "FIRE_YEAR": 2012.0, "R_ACRES": 11588.8 }, "geometry": { "type": "Point", "coordinates": [ -116.261, 39.922 ] } },
+{ "type": "Feature", "properties": { "FIRENAME": "HIGHWAY 13-20", "FIRE_YEAR": 2012.0, "R_ACRES": 8378.3 }, "geometry": { "type": "Point", "coordinates": [ -105.338, 48.353 ] } }
+]
+}
