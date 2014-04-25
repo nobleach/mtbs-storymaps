@@ -1,25 +1,11 @@
 var map = L.map('map',{center: [30.4486736, -127.88085937], zoom: 3})
 .addLayer(new L.TileLayer("http://{s}.tiles.mapbox.com/v3/examples.map-vyofok3q/{z}/{x}/{y}.png"));
 
-var svg = d3.select(map.getPanes().overlayPane).append("svg");
-var g = svg.append("g").attr("class", "leaflet-zoom-hide");
+map._initPathRoot();
+
+var svg = d3.select("#map").select("svg"),
+    g = svg.append("g");
 var circles;
-
-// Reposition the SVG to cover the features.
-function resetSVG() {
-  var bounds = path.bounds(collection),
-  topLeft = bounds[0],
-  bottomRight = bounds[1];
-
-  svg.attr("width", bottomRight[0] - topLeft[0])
-  .attr("height", bottomRight[1] - topLeft[1])
-  .style("left", topLeft[0] + "px")
-  .style("top", topLeft[1] + "px");
-
-  g.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
-
-  feature.attr("d", path);
-}
 
 // Use Leaflet to implement a D3 geometric transformation.
 function projectPoint(x, y) {
@@ -54,8 +40,6 @@ d3.json("js/mtbs-fires.json", function(collection) {
   var path = d3.geo.path().projection(transform);
 
   fires = [];
-  var firesByYear = [];
-  var firesSeen = {};
 
   collection.features.forEach(function(d) {
     d.name = d.properties.FIRENAME;
@@ -63,24 +47,9 @@ d3.json("js/mtbs-fires.json", function(collection) {
     d.area = +d.properties.R_ACRES;
     d.LatLng = new L.LatLng(d.geometry.coordinates[0], d.geometry.coordinates[1]);
     fires.push(d);
-    var year = d.year + '';
-    if(!firesSeen.hasOwnProperty(year)) {
-      firesSeen[year] = {
-        area:0,
-        numFires:0
-      };
-    }
-    firesSeen[year]['area'] += d.area;
-    firesSeen[year]['numFires'] += 1;
   });
+
   console.log(fires);
-  for(var f in firesSeen) {
-    var currYear = {};
-    currYear.year = f;
-    currYear.area = firesSeen[f].area;
-    currYear.numFires = firesSeen[f].numFires;
-    firesByYear.push(currYear);
-  }
 
   fires.sort(function(a, b){return a.id - b.id;})
 
@@ -90,17 +59,26 @@ d3.json("js/mtbs-fires.json", function(collection) {
   colorScale
   .range(["#FFFF66", "#FFFF00", "#E68000", "#D94000", "#CC0000"]);
 
-  circles = g.selectAll("path")
-  g.selectAll('path')
+  var feature = g.selectAll("circle")
   .data(fires)
-  .enter().append('path').attr('d', path);
+  .enter().append("circle")
+  .style("stroke", "black")  
+  .style("opacity", .6) 
+  .style("fill", "red")
+  .attr("r", 20);  
 
-  circles.append('svg:circle')
-  .attr('cx', function(d){return d.geometry.coordinates[0]})
-  .attr('cy', function(d){return d.geometry.coordinates[1]})
-  .attr("r", function(d){return fireScale(d.area);})
-  .style("fill", function(d){return colorScale(d.year);	});
+  map.on("viewreset", update);
+  update();
 
+  function update() {
+    feature.attr("transform", 
+                 function(d) { 
+                   return "translate("+ 
+                     map.latLngToLayerPoint(d.LatLng).x +","+ 
+                     map.latLngToLayerPoint(d.LatLng).y +")";
+                 }
+                )
+  }
   lb = 1.370;
 
   firesCF = crossfilter(fires),
@@ -179,50 +157,4 @@ d3.json("js/mtbs-fires.json", function(collection) {
 });
 
 
-var printDetails = [
-  {'var': 'name', 'print': 'Name'},
-  {'var': 'type_of_meteorite', 'print': 'Type'},
-  {'var': 'mass_g', 'print': 'Mass(g)'},
-  {'var': 'year', 'print': 'Year'}];
-
-  function updateDetails(metor){
-    var image = new Image();
-    image.onload = function(){
-      document.getElementById("tooltipImg").src = 'pictures/' + metor.cartodb_id + '.jpg';}
-      image.src = 'pictures/' + metor.cartodb_id + '.jpg';
-
-      tooltip.selectAll("div").remove();
-      tooltip.selectAll("div").data(printDetails).enter()
-      .append("div")
-      .append('span')
-      .text(function(d){return d.print + ": ";})				
-      .attr("class", "boldDetail")
-      .insert('span')
-      .text(function(d){return metor[d.var];})
-      .attr("class", "normalDetail");
-      map.on("viewreset", reset);
-      reset();
-
-      // Reposition the SVG to cover the features.
-      function reset() {
-        var bounds = path.bounds(collection),
-        topLeft = bounds[0],
-        bottomRight = bounds[1];
-
-        svg.attr("width", bottomRight[0] - topLeft[0])
-        .attr("height", bottomRight[1] - topLeft[1])
-        .style("left", topLeft[0] + "px")
-        .style("top", topLeft[1] + "px");
-
-        g.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
-
-        feature.attr("d", path);
-      }
-
-      // Use Leaflet to implement a D3 geometric transformation.
-      function projectPoint(x, y) {
-        var point = map.latLngToLayerPoint(new L.LatLng(y, x));
-        this.stream.point(point.x, point.y);
-      }
-  }
 

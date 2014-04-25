@@ -1,82 +1,65 @@
 <!DOCTYPE html>
-<meta charset="utf-8">
-<style>
+<html>
+<head>
+	<title>d3.js with leaflet.js</title>
 
-text {
-  font: bold 48px monospace;
-}
+    <link 
+        rel="stylesheet" 
+        href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css"
+    />
+    <script src="http://d3js.org/d3.v3.js"></script>
 
-.enter {
-  fill: green;
-}
-
-.update {
-  fill: #333;
-}
-
-</style>
+    <script
+        src="http://cdn.leafletjs.com/leaflet-0.7/leaflet.js">
+    </script>
+    
+</head>
 <body>
-<script src="http://d3js.org/d3.v2.min.js?2.10.1"></script>
-<script>
 
-var alphabet = "abcdefghijklmnopqrstuvwxyz".split("");
+	<div id="map" style="width: 600px; height: 400px"></div>
 
-var width = 960,
-    height = 500;
+	<script type="text/javascript">
+	
 
-var svg = d3.select("body").append("svg")
-    .attr("width", width)
-    .attr("height", height)
-  .append("g")
-    .attr("transform", "translate(32," + (height / 2) + ")");
+var map = L.map('map',{center: [30.4486736, -127.88085937], zoom: 3})
+.addLayer(new L.TileLayer("http://{s}.tiles.mapbox.com/v3/examples.map-vyofok3q/{z}/{x}/{y}.png"));
+				
+	/* Initialize the SVG layer */
+	map._initPathRoot()    
 
-function update(data) {
+	/* We simply pick up the SVG from the map object */
+	var svg = d3.select("#map").select("svg"),
+	g = svg.append("g");
+	
+	d3.json("js/mtbs-fires.json", function(collection) {
+		/* Add a LatLng object to each item in the dataset */
+                console.log(collection.features);
+		collection.features.forEach(function(d) {
+                  d.LatLng = new L.LatLng(d.geometry.coordinates[0], d.geometry.coordinates[1]);
+                  console.log(d);
+		});
+		
+		var feature = g.selectAll("circle")
+			.data(collection.features)
+			.enter().append("circle")
+			.style("stroke", "black")  
+			.style("opacity", .6) 
+			.style("fill", "red")
+			.attr("r", 20);  
+		
+		map.on("viewreset", update);
+		update();
 
-  // DATA JOIN
-  // Join new data with old elements, if any.
-  var text = svg.selectAll("text")
-      .data(data);
-
-  // UPDATE
-  // Update old elements as needed.
-  text.attr("class", "update");
-
-  // ENTER
-  // Create new elements as needed.
-  text.enter().append("text")
-      .attr("class", "enter")
-      .attr("x", function(d, i) { return i * 32; })
-      .attr("dy", ".35em");
-
-  // ENTER + UPDATE
-  // Appending to the enter selection expands the update selection to include
-  // entering elements; so, operations on the update selection after appending to
-  // the enter selection will apply to both entering and updating nodes.
-  text.text(function(d) { return d; });
-
-  // EXIT
-  // Remove old elements as needed.
-  text.exit().remove();
-}
-
-// The initial display.
-update(alphabet);
-
-// Grab a random sample of letters from the alphabet, in alphabetical order.
-setInterval(function() {
-  update(shuffle(alphabet)
-      .slice(0, Math.floor(Math.random() * 26))
-      .sort());
-}, 1500);
-
-// Shuffles the input array.
-function shuffle(array) {
-  var m = array.length, t, i;
-  while (m) {
-    i = Math.floor(Math.random() * m--);
-    t = array[m], array[m] = array[i], array[i] = t;
-  }
-  return array;
-}
-
+		function update() {
+			feature.attr("transform", 
+			function(d) { 
+				return "translate("+ 
+					map.latLngToLayerPoint(d.LatLng).x +","+ 
+					map.latLngToLayerPoint(d.LatLng).y +")";
+				}
+			)
+		}
+	})			 
 </script>
+</body>
+</html>
