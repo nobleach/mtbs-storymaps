@@ -13,7 +13,8 @@ function projectPoint(x, y) {
   this.stream.point(point.x, point.y);
 }
 
-var fireScale = d3.scale.pow().exponent(.5).domain([0, 1000, 10000, 56000, 23000000]);
+// var fireScale = d3.scale.pow().exponent(.5).domain([0, 1000, 10000, 56000, 23000000]);
+var fireScale = d3.scale.linear().domain([300, 160000]);
 
 var colorScale = d3.scale.linear().domain([1984, 2012]);
 
@@ -28,23 +29,14 @@ d3.json("js/mtbs-fires.json", function(collection) {
 
   fires = [];
 
-  var f = collection.features;
-  for (var i = 0, len = f.length; i < len; i++) {
-    f[i].name = f[i].properties.FIRENAME;
-    f[i].year = f[i].properties.FIRE_YEAR;
-    f[i].area = f[i].properties.R_ACRES;
-    f[i].LatLng = new L.LatLng(f[i].geometry.coordinates[1], f[i].geometry.coordinates[0]);
-    f[i].id = i;
-    fires.push(f[i]);
-  }
-
-  // collection.features.forEach(function(d) {
-  //   d.name = d.properties.FIRENAME;
-  //   d.year = +d.properties.FIRE_YEAR;
-  //   d.area = +d.properties.R_ACRES;
-  //   d.LatLng = new L.LatLng(d.geometry.coordinates[1], d.geometry.coordinates[0]);
-  //   fires.push(d);
-  // });
+  collection.features.forEach(function(d, i) {
+    d.name = d.properties.FIRENAME;
+    d.year = +d.properties.FIRE_YEAR;
+    d.area = +d.properties.R_ACRES;
+    d.LatLng = new L.LatLng(d.geometry.coordinates[1], d.geometry.coordinates[0]);
+    d.id = i;
+    fires.push(d);
+  });
 
 
   fires.sort(function(a, b){return a.id - b.id;})
@@ -80,7 +72,8 @@ d3.json("js/mtbs-fires.json", function(collection) {
   var firesCF = crossfilter(fires),
     all = firesCF.groupAll(),
     year = firesCF.dimension(function(d){return d.year;}),
-    years = year.group(function(d){return Math.floor(d/10)*10;}),
+    // years = year.group(function(d){return Math.floor(d/10)*10;}),
+    years = year.group(function(d){return d;}),
     area = firesCF.dimension(function(d){return d.area}),
     areas = area.group(function(d){ 
       var rv = Math.pow(lb, Math.floor(Math.log(d)/Math.log(lb))) 
