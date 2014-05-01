@@ -42,7 +42,7 @@ d3.json("js/mtbs-fires.json", function(collection) {
   fires.sort(function(a, b){return a.id - b.id;})
 
   fireScale
-  .range([2.5, 3, 4, 5, 10]);
+  .range([2.5, 4]);
 
   colorScale
   .range(["#FFFF66", "#CC0000"]);
@@ -52,7 +52,7 @@ d3.json("js/mtbs-fires.json", function(collection) {
   .enter().append("circle")
   .attr("r", function(d) { return fireScale(d.area)})
   .attr("id", function(d){return "id" + d.id;})
-  .style("fill", function(d){return colorScale(d.year);	});
+  .style("fill", '#CC0000');
 
   map.on("viewreset", update);
   update();
@@ -95,7 +95,7 @@ d3.json("js/mtbs-fires.json", function(collection) {
     .dimension(area)
     .group(areas)
     .x(d3.scale.log().base([lb])
-      .domain([1,16000000])
+      .domain([300,160000])
       .rangeRound([0,20*24]))
   ];
 
