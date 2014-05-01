@@ -13,20 +13,10 @@ function projectPoint(x, y) {
   this.stream.point(point.x, point.y);
 }
 
-var fireScale = d3.scale.pow().exponent(.5).domain([0, 1000, 10000, 56000, 23000000]);
+// var fireScale = d3.scale.pow().exponent(.5).domain([0, 1000, 10000, 56000, 23000000]);
+var fireScale = d3.scale.linear().domain([300, 160000]);
 
 var colorScale = d3.scale.linear().domain([1984, 2012]);
-
-var tooltip = d3.select("body").append("div")
-.attr("class", "tooltip")
-.style("opacity", 1e-6)
-.style("background", "rgba(250,250,250,.7)");
-
-tooltip.append("img")
-.attr("id", "tooltipImg")
-.attr("height", 200)
-.attr("width", 200)
-.style("opacity", "1");
 
 var fires;
 
@@ -39,16 +29,17 @@ d3.json("js/mtbs-fires.json", function(collection) {
 
   fires = [];
 
-  collection.features.forEach(function(d) {
+  collection.features.forEach(function(d, i) {
     d.name = d.properties.FIRENAME;
     d.year = +d.properties.FIRE_YEAR;
     d.area = +d.properties.R_ACRES;
     d.LatLng = new L.LatLng(d.geometry.coordinates[1], d.geometry.coordinates[0]);
+    d.id = i;
     fires.push(d);
   });
 
 
-  // fires.sort(function(a, b){return a.id - b.id;})
+  fires.sort(function(a, b){return a.id - b.id;})
 
   fireScale
   .range([2.5, 3, 4, 5, 10]);
@@ -75,63 +66,80 @@ d3.json("js/mtbs-fires.json", function(collection) {
       }
     );
   }
-  lb = 1.370;
 
-  firesCF = crossfilter(fires),
-  all = firesCF.groupAll(),
-  year = firesCF.dimension(function(d){return d.year;}),
-  years = year.group(function(d){return Math.floor(d/10)*10;}),
-  area = firesCF.dimension(function(d){return d.area}),
-  areas = area.group(function(d){ 
-    var rv = Math.pow(lb, Math.floor(Math.log(d)/Math.log(lb))) 
-    return rv;
-  });
+  var lb = 1.370;
 
-    var charts = [
-      barChart()
-      .dimension(year)
-      .group(years)
-      .x(d3.scale.linear()
-         .domain([1984,2012])
-         .rangeRound([-1, 20*24-5])),
-
-         barChart()
-         .dimension(area)
-         .group(areas)
-         .x(d3.scale.log().base([lb])
-            .domain([1,16000000])
-            .rangeRound([0,20*24]))
-    ];
-
-    var chart = d3.selectAll(".chart")
-    .data(charts)
-    .each(function(chart){chart.on("brush", renderAll).on("brushend", renderAll)});
-
-    d3.selectAll("#total")
-    .text(firesCF.size());
-
-
-    function render(method){
-      d3.select(this).call(method);
-    }
-
-
-    lastFilterArray = [];
-    fires.forEach(function(d, i){
-      lastFilterArray[i] = 1;
+  var firesCF = crossfilter(fires),
+    all = firesCF.groupAll(),
+    year = firesCF.dimension(function(d){return d.year;}),
+    // years = year.group(function(d){return Math.floor(d/10)*10;}),
+    years = year.group(function(d){return d;}),
+    area = firesCF.dimension(function(d){return d.area}),
+    areas = area.group(function(d){ 
+      var rv = Math.pow(lb, Math.floor(Math.log(d)/Math.log(lb))) 
+      return rv;
     });
 
-    function renderAll(){
-      chart.each(render);
+    var cartoDbId = firesCF.dimension(function(d){return d.id;});
+    var cartoDbIds = cartoDbId.group();
 
-    }
+  var charts = [
+    barChart()
+    .dimension(year)
+    .group(years)
+    .x(d3.scale.linear()
+      .domain([1984,2012])
+      .rangeRound([-1, 20*24-5])),
 
-    window.reset = function(i){
-      charts[i].filter(null);
-      renderAll();
-    }
+    barChart()
+    .dimension(area)
+    .group(areas)
+    .x(d3.scale.log().base([lb])
+      .domain([1,16000000])
+      .rangeRound([0,20*24]))
+  ];
 
-    renderAll();
+  var chart = d3.selectAll(".chart")
+  .data(charts)
+  .each(function(chart){chart.on("brush", renderAll).on("brushend", renderAll)});
+
+  d3.selectAll("#total")
+  .text(firesCF.size());
+
+  function render(method){
+    d3.select(this).call(method);
+  }
+
+
+  lastFilterArray = [];
+  fires.forEach(function(d, i){
+    lastFilterArray[i] = 1;
+  });
+
+  function renderAll(){
+    chart.each(render);
+
+    var filterArray = cartoDbIds.all();
+    filterArray.forEach(function(d, i){
+      if (d.value != lastFilterArray[i]){
+        lastFilterArray[i] = d.value;
+        d3.select("#id" + d.key).transition().duration(500)
+        .attr("r", d.value == 1 ? 2*fireScale(fires[i].area) : 0)
+        .transition().delay(550).duration(500)
+        .attr("r", d.value == 1 ? fireScale(fires[i].area) : 0);
+
+      }
+    })
+
+    d3.select("#active").text(all.value());
+  }
+
+	window.reset = function(i){
+		charts[i].filter(null);
+		renderAll();
+	}
+
+	renderAll();
 });
 
 

@@ -3,7 +3,7 @@ function barChart() {
 
   var margin = {top: 10, right: 10, bottom: 20, left: 40},
       x,
-      y = d3.scale.linear().range([100, 0]),
+      y = d3.scale.linear().range([50, 0]),
       id = barChart.id++,
       axis = d3.svg.axis().orient("bottom"),
       brush = d3.svg.brush(),
@@ -91,6 +91,7 @@ function barChart() {
           d;
       while (++i < n) {
         d = groups[i];
+        // console.log(d);
         if (isNaN(x(d.key))) {
           debugger;
         }
@@ -153,17 +154,17 @@ function barChart() {
     x = _;
     if (x.domain()[1] < 3000){
       //format years differently than mass
-      axis.scale(x).ticks(10).tickFormat(d3.format(""));
+      axis.scale(x).ticks(5).tickFormat(d3.format(""));
     }
     else{
-      axis.scale(x).tickValues([1, 10, 100, 1000, 10000, 100000, 1000000, 10000000]).tickFormat(d3.format(","));
+      axis.scale(x).tickValues([1, 10, 100, 1000, 10000, 100000, 1000000]).tickFormat(d3.format(","));
     }
     brush.x(x);
     return chart;
   };
 
   function logFormat(d){
-    return "" + ((d <= 10000000) ? d : d.toExponential())
+    return "" + ((d <= 100000) ? d : d.toExponential())
   }
 
   chart.y = function(_) {

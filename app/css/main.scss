@@ -45,6 +45,39 @@ div.footer {
     margin: 0 auto;
     color:#fff;
 
+    .background.bar {
+      fill: #ccc;
+    }
+
+    .title{
+      text-align: left;
+      margin-left: 40px;
+      font-weight: bold;
+    }
+
+    #year-chart .foreground.bar {
+      fill: #ff7f0e;
+    }
+
+    #mass-chart .foreground.bar {
+      fill:  #d62728;
+    }
+
+    .bar{
+      stroke:black;
+      stroke-width: .3; 
+    }
+
+    .brush rect.extent {
+      fill: steelblue;
+      fill-opacity: .125;
+    }
+
+    .brush .resize path {
+      fill: #eee;
+      stroke: #666;
+    }
+
     h2 {
       display:inline-block;
       font-family: $font-stack;
@@ -53,7 +86,7 @@ div.footer {
       font-size: 36px;
     }
 
-    .histogramContainer {
+    .chart {
       display: inline-block;
 
       h4 {
