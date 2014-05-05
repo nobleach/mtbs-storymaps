@@ -42,7 +42,7 @@ d3.json("js/mtbs-fires.json", function(collection) {
   fires.sort(function(a, b){return a.id - b.id;})
 
   fireScale
-  .range([2.5, 4]);
+  .range([1, 2.5, 3.2, 4]);
 
   colorScale
   .range(["#FFFF66", "#CC0000"]);
